@@ -5,6 +5,6 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
     public Climate climate;
-    public float degree;
+    public int degree;
     public List<Organism> inhabitants;
 }

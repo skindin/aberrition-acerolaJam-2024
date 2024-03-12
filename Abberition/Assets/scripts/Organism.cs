@@ -6,9 +6,9 @@ using UnityEngine;
 
 public class Organism
 {
-    public float agression;
+    public float aggression;
+    public float instability;
 
     public List<Resource> diet;
     public List<Resource> products;
-    public List<Resource> composition;
 }
