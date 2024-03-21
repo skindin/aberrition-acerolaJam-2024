@@ -9,6 +9,6 @@ public class Organism
     public float aggression;
     public float instability;
 
-    public List<Resource> diet;
-    public List<Resource> products;
+    public List<Recipe> recipes = new();
+    public List<Resource> comp = new(); //resources this organism can consume
 }

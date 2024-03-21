@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-    public Climate climate;
-    public int degree;
-    public List<Organism> inhabitants;
+    public List<Resource> finiteResources = new();
+    public List<Resource> indefinite = new();
+    public List<Organism> inhabitants = new();
 }
