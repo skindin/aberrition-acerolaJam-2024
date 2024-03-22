@@ -50,11 +50,11 @@ public class Recipe
     {
         if (resource.type is PolymerType polymer)
         {
-            foreach (var a in polymer.resources)
+            foreach (var a in polymer.ingredients)
             {
                 var yieldFactor = 1;
 
-                foreach (var b in polymer.resources)
+                foreach (var b in polymer.ingredients)
                 {
                     if (b != a && b.type is PolymerType polymerB)
                     {

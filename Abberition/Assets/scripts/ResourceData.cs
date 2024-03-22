@@ -4,28 +4,27 @@ using UnityEngine;
 
 public class ResourceData : MonoBehaviour
 {
-    public List<ResourceType> primaryTypes = new();
-    public List<PolymerType> polymerTypes = new();
+    public List<ResourceType> resourceTypes = new();
 
     public List<Recipe> recipes = new();
 
     public void AddPrimary ()
     {
-        primaryTypes.Add(new());
+        resourceTypes.Add(new());
     }
 
     public void RemovePrimary (ResourceType type)
     {
-        primaryTypes.Remove(type);
+        resourceTypes.Remove(type);
     }
 
     public void AddPolymer()
     {
-        primaryTypes.Add(new());
+        resourceTypes.Add(new PolymerType());
     }
 
     public void RemovePolymer(PolymerType type)
     {
-        polymerTypes.Remove(type);
+        resourceTypes.Remove(type);
     }
 }

@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[System.Serializable]
 public class PolymerType : ResourceType
 {
-    public List<Resource> resources = new();
-    public int yieldAmount;
+    public List<Resource> ingredients = new();
+    public int yieldAmount = 1;
 
-    //gotta think of some way to prevent product resources from refferencing themselves
+    public PolymerType(string name = "") : base(name)
+    {
+        this.name = name;
+    }
 
-    public bool CheckForParadox ()
+    public bool CheckForParadox()
     {
         bool containsPolymer = false;
         bool containsParadox = false;
 
-        foreach (var resource in resources)
+        foreach (var resource in ingredients)
         {
             if (resource.type is PolymerType)
             {
@@ -35,7 +39,7 @@ public class PolymerType : ResourceType
         return containsParadox;
     }
 
-    public static bool CheckForSelf (PolymerType polymer, int depth)
+    public static bool CheckForSelf(PolymerType polymer, int depth)
     {
         if (depth > 10) //this chunk is just to prevent crashes in case i did something wrong in this script
         {
@@ -44,14 +48,14 @@ public class PolymerType : ResourceType
         }
         depth++;
 
-        bool containsSelf = polymer.resources.Any(x => (PolymerType)x.type == polymer);
+        bool containsSelf = polymer.ingredients.Any(x => (PolymerType)x.type == polymer);
         if (containsSelf)
         {
             return true;
         }
         else
         {
-            foreach (var resource in polymer.resources)
+            foreach (var resource in polymer.ingredients)
             {
                 if (resource.type is PolymerType && !CheckForSelf((PolymerType)resource.type, depth))
                 {

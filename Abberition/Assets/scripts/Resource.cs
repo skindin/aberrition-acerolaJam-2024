@@ -12,4 +12,8 @@ public class Resource
         this.type = type;
         this.amount = amount;
     }
+
+    public Resource ()
+    {
+    }
 }
