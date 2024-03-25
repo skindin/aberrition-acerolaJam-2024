@@ -2,29 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceData : MonoBehaviour
+public class ResourceManager : MonoBehaviour
 {
     public List<ResourceType> resourceTypes = new();
 
     public List<Recipe> recipes = new();
 
-    public void AddPrimary ()
+    public void AddResource ()
     {
         resourceTypes.Add(new());
     }
 
-    public void RemovePrimary (ResourceType type)
+    public void RemoveResource (ResourceType type)
     {
         resourceTypes.Remove(type);
     }
 
-    public void AddPolymer()
+    public void AddRecipe()
     {
-        resourceTypes.Add(new PolymerType());
+        recipes.Add(new());
     }
 
-    public void RemovePolymer(PolymerType type)
+    public void RemoveRecipe (Recipe recipe)
     {
-        resourceTypes.Remove(type);
+        recipes.Remove(recipe);
     }
 }

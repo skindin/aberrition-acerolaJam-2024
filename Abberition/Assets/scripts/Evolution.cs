@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Evolution : MonoBehaviour
 {
-    public ResourceData resourceMngr;
+    public ResourceManager resourceMngr;
 
     //these represent the chance of a given trait mutating within a million years
     public float recipeChance, compChance, aggChance, instabChance;

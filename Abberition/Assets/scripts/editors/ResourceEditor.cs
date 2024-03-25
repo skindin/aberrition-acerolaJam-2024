@@ -2,97 +2,159 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEditor.SceneManagement;
 using System.Linq;
 
-[CustomEditor(typeof(ResourceData))]
+[CustomEditor(typeof(ResourceManager))]
 public class ResourceEditor : Editor
 {
-    ResourceData resourceData;
+    ResourceManager manager;
+    bool showResourceTypes = true, showRecipes = true;
+    [HideInInspector]
+    List<bool> recipeVisibility = new();
 
     private void OnEnable()
     {
+
     }
 
     public override void OnInspectorGUI()
     {
-        //base.OnInspectorGUI();
-        if (!resourceData) resourceData = (ResourceData)target;
+        if (!manager) manager = (ResourceManager)target;
+
+        var invisCount = manager.recipes.Count - recipeVisibility.Count;
+        for (var i = 0; i < invisCount; i++)
+        {
+            recipeVisibility.Add(true);
+        }
+
+        //base.OnInspectorGUI()
 
         //DrawPrimaryResources();
         DrawResourceTypes();
+        EditorGUILayout.Space(10);
+        DrawRecipes();
+
+        if (GUI.changed)
+        {
+            EditorUtility.SetDirty(manager);
+            EditorSceneManager.MarkSceneDirty(manager.gameObject.scene);
+        }
     }
 
     public void DrawResourceTypes ()
     {
-        EditorGUILayout.LabelField("Polymer Resources: " + resourceData.resourceTypes.Count);
+        var label = "Resource Types (" + manager.resourceTypes.Count + ")";
+        showResourceTypes = EditorGUILayout.Foldout(showResourceTypes,label);
+
+        if (!showResourceTypes) return;
 
         EditorGUI.indentLevel++;
 
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Add Resource"))
+        //EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Add Resource Type"))
         {
-            resourceData.AddPrimary();
+            manager.AddResource();
         }
         //if (GUILayout.Button("Add Polymer Resource"))
         //{
         //    resourceData.AddPolymer();
         //}
-        EditorGUILayout.EndHorizontal();
+        //EditorGUILayout.EndHorizontal();
 
-        var resourceList = ResourceList();
-
-        for (var i = 0; i < resourceData.resourceTypes.Count; i++)
+        for (var i = 0; i < manager.resourceTypes.Count; i++)
         {
-            var resource = resourceData.resourceTypes[i];
+            var resource = manager.resourceTypes[i];
 
             EditorGUILayout.Space(10);
 
             EditorGUILayout.BeginHorizontal();
-            resource.name = EditorGUILayout.TextField("Resource Name", resource.name);
+            resource.name = EditorGUILayout.TextField("", resource.name);
             if (GUILayout.Button("Delete"))
             {
-                resourceData.resourceTypes.Remove(resource);
+                manager.resourceTypes.Remove(resource);
                 i--;
             }
             EditorGUILayout.EndHorizontal();
+        }
 
-            var isPolymer = EditorGUILayout.Toggle("Is Polymer", resource is PolymerType);
-            if (isPolymer && !(resource is PolymerType))
-            {
-                resourceData.resourceTypes[i] = resource = new PolymerType(resource.name);
-            }
-            if (!isPolymer && resource is PolymerType)
-            {
-                resourceData.resourceTypes[i] = resource = new ResourceType(resource.name);
-            }
+        EditorGUI.indentLevel--;
+    }
 
-            if (resource is PolymerType polymer)
+    public void DrawRecipes ()
+    {
+        var label = "Recipes (" + manager.recipes.Count + ")";
+        showRecipes = EditorGUILayout.Foldout(showRecipes, label);
+
+        if (!showRecipes) return;
+
+        EditorGUI.indentLevel++;
+
+        if (GUILayout.Button("Add Recipe"))
+        {
+            manager.AddRecipe();
+            recipeVisibility.Add(true);
+        }
+
+        for (var i = 0; i < manager.recipes.Count; i++)
+        {
+            var recipe = manager.recipes[i];
+
+            var recipeLabel = "Recipe " + (i + 1) + ": " + recipe.ReadRecipe();
+
+            recipeVisibility[i] = EditorGUILayout.Foldout(recipeVisibility[i], recipeLabel);
+
+            if (recipeVisibility[i])
             {
-                EditorGUILayout.LabelField("Ingredients");
                 EditorGUI.indentLevel++;
-
-                if (polymer.ingredients.Count == 0 || GUILayout.Button("Add Ingredient"))
+                DrawResourceList(recipe.ingredients,"Ingredients");
+                EditorGUILayout.Space(10);
+                DrawResourceList(recipe.products,"Products");//
+                if (GUILayout.Button("Delete"))
                 {
-                    polymer.ingredients.Add(new(resourceData.resourceTypes[0], 1));
+                    manager.recipes.Remove(recipe);
+                    recipeVisibility.RemoveAt(i);
+                    i--;
                 }
-
-                foreach (var ingredient in polymer.ingredients)
-                {
-                    int typeIndex = resourceData.resourceTypes.IndexOf(ingredient.type);
-                    typeIndex = EditorGUILayout.Popup("Resource Type", typeIndex, resourceList);
-                    ingredient.type = TypeFromString(resourceList[typeIndex]);
-                    ingredient.amount = EditorGUILayout.IntField("Amount", ingredient.amount);
-                }
-
                 EditorGUI.indentLevel--;
-
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField("Yield Amount");
-                polymer.yieldAmount = EditorGUILayout.IntField(polymer.yieldAmount);
-                EditorGUILayout.EndHorizontal();
             }
         }
 
+        EditorGUI.indentLevel--;
+    }
+
+    public void DrawResource (Resource resource)
+    {
+        resource.typeIndex = EditorGUILayout.Popup("", resource.typeIndex, ResourceList(), GUILayout.Width(200));//
+        resource.typeIndex = Mathf.Clamp(resource.typeIndex, 0, manager.resourceTypes.Count - 1);
+        resource.type = manager.resourceTypes[resource.typeIndex];
+        resource.amount = EditorGUILayout.IntField("", resource.amount, GUILayout.Width(200));
+    }
+
+    public void DrawResourceList(List<Resource> resources, string label)
+    {
+        EditorGUILayout.BeginHorizontal();
+        EditorGUILayout.LabelField(label);
+        if (GUILayout.Button("Add Resource"))
+        {
+            var newResource = new Resource();
+            resources.Add(newResource);
+        }
+        EditorGUILayout.EndHorizontal();
+        EditorGUI.indentLevel++;
+        for (var i = 0; i < resources.Count; i++)//
+        {
+            var resource = resources[i];
+
+            EditorGUILayout.BeginHorizontal();
+            DrawResource(resource);
+            if (GUILayout.Button("Delete"))
+            {
+                resources.Remove(resource);
+                i--;
+            }
+            EditorGUILayout.EndHorizontal();
+        }
         EditorGUI.indentLevel--;
     }
 
@@ -100,7 +162,7 @@ public class ResourceEditor : Editor
     {
         List<string> output = new();
 
-        foreach (var resource in resourceData.resourceTypes)
+        foreach (var resource in manager.resourceTypes)
         {
             output.Add(resource.name);
         }
@@ -108,14 +170,15 @@ public class ResourceEditor : Editor
         return output.ToArray();
     }
 
-    public ResourceType TypeFromString (string name)
-    {
-        foreach (var resource in resourceData.resourceTypes)
-        {
-            if (resource.name == name) return resource;
-        }
 
-        Debug.LogError("No Resource of name" + name);
-        return null;
-    }
+    //public ResourceType TypeFromString (string name)
+    //{
+    //    foreach (var resource in resourceData.resourceTypes)
+    //    {
+    //        if (resource.name == name) return resource;
+    //    }
+
+    //    Debug.LogError("No Resource of name" + name);
+    //    return null;
+    //}
 }

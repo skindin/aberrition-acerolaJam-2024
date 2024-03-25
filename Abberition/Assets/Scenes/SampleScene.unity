@@ -168,9 +168,104 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceTypes:
-  - name: A
-  - name: B
-  - name: C
+  - name: Sunlight
+  - name: CO2
+  - name: Water
+  - name: Sugar
+  - name: Oxygen
+  - name: Protein
+  - name: Meat
+  - name: Heat
+  - name: Crud
+  recipes:
+  - ingredients:
+    - type:
+        name: Sunlight
+      typeIndex: 0
+      amount: 3
+    - type:
+        name: CO2
+      typeIndex: 1
+      amount: 6
+    - type:
+        name: Water
+      typeIndex: 2
+      amount: 6
+    products:
+    - type:
+        name: Sugar
+      typeIndex: 3
+      amount: 1
+    - type:
+        name: Oxygen
+      typeIndex: 4
+      amount: 6
+    mutationChance: 0
+  - ingredients:
+    - type:
+        name: Sugar
+      typeIndex: 3
+      amount: 1
+    - type:
+        name: Oxygen
+      typeIndex: 4
+      amount: 6
+    - type:
+        name: Heat
+      typeIndex: 7
+      amount: 1
+    products:
+    - type:
+        name: Heat
+      typeIndex: 7
+      amount: 3
+    - type:
+        name: Water
+      typeIndex: 2
+      amount: 6
+    - type:
+        name: CO2
+      typeIndex: 1
+      amount: 6
+    mutationChance: 0
+  - ingredients:
+    - type:
+        name: Heat
+      typeIndex: 7
+      amount: 1
+    - type:
+        name: Protein
+      typeIndex: 5
+      amount: 1
+    products:
+    - type:
+        name: Meat
+      typeIndex: 6
+      amount: 1
+    mutationChance: 0
+  - ingredients:
+    - type:
+        name: Crud
+      typeIndex: 8
+      amount: 1
+    - type:
+        name: Sunlight
+      typeIndex: 0
+      amount: 1
+    - type:
+        name: Water
+      typeIndex: 2
+      amount: 1
+    products:
+    - type:
+        name: Oxygen
+      typeIndex: 4
+      amount: 1
+    - type:
+        name: Protein
+      typeIndex: 5
+      amount: 1
+    mutationChance: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
