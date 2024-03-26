@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 639499308}
   - component: {fileID: 639499309}
+  - component: {fileID: 639499310}
   m_Layer: 0
   m_Name: resourceManager
   m_TagString: Untagged
@@ -180,92 +181,36 @@ MonoBehaviour:
   recipes:
   - ingredients:
     - type:
-        name: Sunlight
-      typeIndex: 0
-      amount: 3
-    - type:
-        name: CO2
-      typeIndex: 1
-      amount: 6
-    - type:
-        name: Water
-      typeIndex: 2
-      amount: 6
-    products:
-    - type:
         name: Sugar
       typeIndex: 3
-      amount: 1
-    - type:
-        name: Oxygen
-      typeIndex: 4
-      amount: 6
-    mutationChance: 0
-  - ingredients:
-    - type:
-        name: Sugar
-      typeIndex: 3
-      amount: 1
-    - type:
-        name: Oxygen
-      typeIndex: 4
-      amount: 6
-    - type:
-        name: Heat
-      typeIndex: 7
-      amount: 1
+      amount: 0
     products:
-    - type:
-        name: Heat
-      typeIndex: 7
-      amount: 3
-    - type:
-        name: Water
-      typeIndex: 2
-      amount: 6
-    - type:
-        name: CO2
-      typeIndex: 1
-      amount: 6
-    mutationChance: 0
-  - ingredients:
-    - type:
-        name: Heat
-      typeIndex: 7
-      amount: 1
-    - type:
-        name: Protein
-      typeIndex: 5
-      amount: 1
-    products:
-    - type:
-        name: Meat
-      typeIndex: 6
-      amount: 1
-    mutationChance: 0
-  - ingredients:
-    - type:
-        name: Crud
-      typeIndex: 8
-      amount: 1
     - type:
         name: Sunlight
       typeIndex: 0
-      amount: 1
-    - type:
-        name: Water
-      typeIndex: 2
-      amount: 1
-    products:
-    - type:
-        name: Oxygen
-      typeIndex: 4
-      amount: 1
-    - type:
-        name: Protein
-      typeIndex: 5
-      amount: 1
+      amount: 0
     mutationChance: 0
+--- !u!114 &639499310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 639499307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da1261791e869534a923c0a3313eae6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resourceManager: {fileID: 0}
+  test:
+    dynamic: 1
+    fixedVal: 14.37
+    min: 0
+    max: 9.453901
+    avg: 5.72
+    conc: 0.444
+  results: 10
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

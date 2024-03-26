@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct Resource
+public class Resource
 {
     [SerializeField]
     public ResourceType type;
