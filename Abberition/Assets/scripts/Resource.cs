@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Resource
+public class Resource //it kills me to make this a class *crying emoji* so much wasted memory
 {
-    [SerializeField]
+    [SerializeReference]
     public ResourceType type;
     public int typeIndex; //this needs a lot of attention
     public int amount;

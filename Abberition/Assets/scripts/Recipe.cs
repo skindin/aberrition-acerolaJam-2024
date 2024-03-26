@@ -103,7 +103,7 @@ public class Recipe
         foreach (var resource in resources)
         {
             output += resource.amount + " " + resource.type.name;
-            if (resource.type != resources[resources.Count-1].type) //this requires no repeat types in lists
+            if (resource.type != resources[^1].type) //this requires no repeat types in lists
             {
                 output += " + ";
             }

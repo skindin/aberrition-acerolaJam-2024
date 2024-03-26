@@ -33,6 +33,10 @@ public class ResourceEditor : Editor
         //DrawPrimaryResources();
         DrawResourceTypes();
         EditorGUILayout.Space(10);
+        //if (GUILayout.Button("Reset Recipes"))
+        //{
+        //    manager.recipes.Clear();
+        //}
         DrawRecipes();
 
         if (GUI.changed)
@@ -123,7 +127,7 @@ public class ResourceEditor : Editor
         EditorGUI.indentLevel--;
     }
 
-    public void DrawResource (Resource resource)
+    public void DrawResource (ref Resource resource)
     {
         resource.typeIndex = EditorGUILayout.Popup("", resource.typeIndex, ResourceList(), GUILayout.Width(200));//
         resource.typeIndex = Mathf.Clamp(resource.typeIndex, 0, manager.resourceTypes.Count - 1);
@@ -137,7 +141,7 @@ public class ResourceEditor : Editor
         EditorGUILayout.LabelField(label);
         if (GUILayout.Button("Add Resource"))
         {
-            var newResource = new Resource();
+            var newResource = new Resource(manager.resourceTypes[0],1,0);
             resources.Add(newResource);
         }
         EditorGUILayout.EndHorizontal();
@@ -147,7 +151,7 @@ public class ResourceEditor : Editor
             var resource = resources[i];
 
             EditorGUILayout.BeginHorizontal();
-            DrawResource(resource);
+            DrawResource(ref resource);
             if (GUILayout.Button("Delete"))
             {
                 resources.Remove(resource);
