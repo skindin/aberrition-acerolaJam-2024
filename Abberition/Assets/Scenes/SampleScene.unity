@@ -169,19 +169,95 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceTypes:
-  - name: Sunlight
-  - name: CO2
-  - name: Water
-  - name: Sugar
-  - name: Oxygen
-  - name: Protein
-  - name: Meat
-  - name: Heat
-  - name: Crud
-  recipes: []
+  - name: A
+  - name: B
+  - name: C
+  - name: D
+  - name: E
+  - name: F
+  - name: G
+  - name: H
+  - name: I
+  recipes:
+  - ingredients:
+    - type:
+        rid: 7479736345321537559
+      typeIndex: 0
+      amount: 0
+    products:
+    - type:
+        rid: 7479736345321537560
+      typeIndex: 0
+      amount: 0
+    mutationChance: 0
+  - ingredients:
+    - type:
+        rid: 7479736345321537559
+      typeIndex: 0
+      amount: 0
+    products:
+    - type:
+        rid: 7479736345321537561
+      typeIndex: 0
+      amount: 0
+    - type:
+        rid: 7479736345321537562
+      typeIndex: 0
+      amount: 0
+    mutationChance: 0
+  - ingredients:
+    - type:
+        rid: 7479736345321537562
+      typeIndex: 0
+      amount: 0
+    products:
+    - type:
+        rid: 7479736345321537563
+      typeIndex: 0
+      amount: 0
+    mutationChance: 0
+  - ingredients:
+    - type:
+        rid: 7479736345321537559
+      typeIndex: 0
+      amount: 0
+    - type:
+        rid: 7479736345321537559
+      typeIndex: 0
+      amount: 0
+    products:
+    - type:
+        rid: 7479736345321537559
+      typeIndex: 0
+      amount: 0
+    - type:
+        rid: 7479736345321537559
+      typeIndex: 0
+      amount: 0
+    mutationChance: 0
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7479736345321537559
+      type: {class: ResourceType, ns: , asm: Assembly-CSharp}
+      data:
+        name: A
+    - rid: 7479736345321537560
+      type: {class: ResourceType, ns: , asm: Assembly-CSharp}
+      data:
+        name: B
+    - rid: 7479736345321537561
+      type: {class: ResourceType, ns: , asm: Assembly-CSharp}
+      data:
+        name: C
+    - rid: 7479736345321537562
+      type: {class: ResourceType, ns: , asm: Assembly-CSharp}
+      data:
+        name: D
+    - rid: 7479736345321537563
+      type: {class: ResourceType, ns: , asm: Assembly-CSharp}
+      data:
+        name: E
 --- !u!114 &639499310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,15 +270,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da1261791e869534a923c0a3313eae6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resourceManager: {fileID: 0}
+  resourceManager: {fileID: 639499309}
   TypeAmount:
     dynamic: 1
     intValues: 1
     fixedVal: 0
-    min: 0
+    min: 1
     max: 20
-    avg: 6
-    conc: 0.877
+    avg: 4.06
+    conc: 0.743
   RenewableRatio:
     dynamic: 1
     intValues: 1
@@ -219,56 +295,46 @@ MonoBehaviour:
     max: 1
     avg: 0.685
     conc: 0.531
-  HighestPolymerDepth:
+  PolymerDepth:
     dynamic: 1
     intValues: 1
     fixedVal: 0
     min: 0
-    max: 6
-    avg: 4
-    conc: 0.303
-  AvgPolymerDepth:
+    max: 10
+    avg: 5
+    conc: 0.83
+  TypesPerRecipeGroup:
     dynamic: 1
     intValues: 1
     fixedVal: 0
-    min: 0
-    max: 6
-    avg: 2.55
-    conc: 0.508
-  PolymerDepthConc:
-    dynamic: 1
-    intValues: 1
-    fixedVal: 0
-    min: 0
-    max: 1
-    avg: 0.738
-    conc: 0
+    min: 1
+    max: 3
+    avg: 1.5
+    conc: 0.85
   RecipePortions:
     dynamic: 1
     intValues: 1
     fixedVal: 0
-    min: 0
-    max: 7
-    avg: 2.85
-    conc: 0.914
-  TypesPerRecipeGroup:
-    dynamic: 0
-    intValues: 0
-    fixedVal: 0
-    min: 0
-    max: 0
-    avg: 0
-    conc: 0
-  resourceNameList: A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-  test:
-    dynamic: 1
-    intValues: 1
-    fixedVal: 4.56
-    min: 0
-    max: 5
-    avg: 4
-    conc: 0.525
-  results: 10
+    min: 1
+    max: 8
+    avg: 3.4
+    conc: 0.555
+  seed: 0
+  dataString: 'Resources (8): A, B, C, D, E, F, G, H
+
+    Recipes (5):
+
+    5 A ->
+    3 B + 6 C
+
+    2 B + 3 A -> 6 D + 2 E
+
+    5 E + 6 A -> 4 F
+
+    3 B + 1 E ->
+    2 G
+
+    6 A + 6 C -> 5 H'
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

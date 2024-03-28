@@ -15,14 +15,23 @@ public class ResourceGeneratorEditor : Editor
     {
         if (!generator) generator = (ResourceGenerator)target;
 
+        generator.seed = EditorGUILayout.IntField("Seed", generator.seed);
+
+        if (GUILayout.Button("Generate Resources"))
+        {
+            generator.GenerateResources();
+            generator.WriteData();
+        }
+
+        EditorGUILayout.TextArea(generator.dataString);
+
+        GUILayout.Space(20);
+
         EditorGUILayout.LabelField("Type Amount");
         DrawMMA(ref generator.TypeAmount);
 
         EditorGUILayout.LabelField("Renewable Ratio");
         DrawMMA(ref generator.RenewableRatio);
-
-        EditorGUILayout.LabelField("Recipe Portions");
-        DrawMMA(ref generator.RecipePortions);
 
         EditorGUILayout.LabelField("Component Type Ratio");
         DrawMMA(ref generator.CompTypeRatio);
@@ -39,7 +48,11 @@ public class ResourceGeneratorEditor : Editor
         EditorGUILayout.LabelField("Polymer Depth");
         DrawMMA(ref generator.PolymerDepth);
 
-        //still gotta draw portions and typesPerGroup
+        EditorGUILayout.LabelField("Types per Recipe Group");
+        DrawMMA(ref generator.TypesPerRecipeGroup);
+
+        EditorGUILayout.LabelField("Recipe Portions");
+        DrawMMA(ref generator.RecipePortions);
 
         if (GUI.changed && !Application.isPlaying)
         {
