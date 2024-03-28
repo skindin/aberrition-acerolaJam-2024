@@ -178,10 +178,7 @@ MonoBehaviour:
   - name: Meat
   - name: Heat
   - name: Crud
-  recipes:
-  - ingredients: []
-    products: []
-    mutationChance: 0
+  recipes: []
   references:
     version: 2
     RefIds: []
@@ -254,7 +251,7 @@ MonoBehaviour:
     max: 7
     avg: 2.85
     conc: 0.914
-  RecipesPerDepth:
+  TypesPerRecipeGroup:
     dynamic: 0
     intValues: 0
     fixedVal: 0

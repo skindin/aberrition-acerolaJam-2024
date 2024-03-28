@@ -10,12 +10,34 @@ public class ResourceEditor : Editor
 {
     ResourceManager manager;
     bool showResourceTypes = true, showRecipes = true;
-    [HideInInspector]
     List<bool> recipeVisibility = new();
 
     private void OnEnable()
     {
+        // Load serialized data using EditorPrefs
+        showResourceTypes = EditorPrefs.GetBool("ShowResourceTypes", true);
+        showRecipes = EditorPrefs.GetBool("ShowRecipes", true);
 
+        int recipeCount = EditorPrefs.GetInt("RecipeCount", 0);
+        recipeVisibility.Clear();
+        for (int i = 0; i < recipeCount; i++)
+        {
+            bool visibility = EditorPrefs.GetBool($"RecipeVisibility_{i}", true);
+            recipeVisibility.Add(visibility);
+        }
+    }
+
+    private void OnDisable()
+    {
+        // Save serialized data using EditorPrefs
+        EditorPrefs.SetBool("ShowResourceTypes", showResourceTypes);
+        EditorPrefs.SetBool("ShowRecipes", showRecipes);
+
+        EditorPrefs.SetInt("RecipeCount", recipeVisibility.Count);
+        for (int i = 0; i < recipeVisibility.Count; i++)
+        {
+            EditorPrefs.SetBool($"RecipeVisibility_{i}", recipeVisibility[i]);
+        }
     }
 
     public override void OnInspectorGUI()
@@ -39,7 +61,7 @@ public class ResourceEditor : Editor
         //}
         DrawRecipes();
 
-        if (GUI.changed)
+        if (GUI.changed && !Application.isPlaying)
         {
             EditorUtility.SetDirty(manager);
             EditorSceneManager.MarkSceneDirty(manager.gameObject.scene);
@@ -120,6 +142,8 @@ public class ResourceEditor : Editor
                     recipeVisibility.RemoveAt(i);
                     i--;
                 }
+
+                recipe.mutationChance = EditorGUILayout.Slider("Mutation Chance", recipe.mutationChance, 0, 1);
                 EditorGUI.indentLevel--;
             }
         }

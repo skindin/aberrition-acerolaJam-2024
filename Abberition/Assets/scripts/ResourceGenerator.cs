@@ -10,11 +10,12 @@ public class ResourceGenerator : MonoBehaviour
         TypeAmount,
         RenewableRatio,
         CompTypeRatio,
-        HighestPolymerDepth,
-        AvgPolymerDepth,
-        PolymerDepthConc,
-        RecipePortions,
-        TypesPerRecipeGroup
+        PolymerDepth,
+        //HighestPolymerDepth,
+        //AvgPolymerDepth,
+        //PolymerDepthConc,
+        TypesPerRecipeGroup,
+        RecipePortions
         ;
 
     MMA polymerDepth;
@@ -52,110 +53,171 @@ public class ResourceGenerator : MonoBehaviour
 
         //recipe portions and types per recipe will be generated for each recipe
 
-        List<ResourceType> types = new();
+        List<ResourceType> resourceTypes = new();
 
         var names = resourceNameList.Split(" ");
 
         for (var i = 0; i < typeAmount; i++)
         {
-            types.Add(new(names[i]));
+            resourceTypes.Add(new(names[i]));
         }
         //create resources and assign names
 
-        List<ResourceType> renewableTypes = ListRandom(renewableAmount, types);
+        List<ResourceType> renewableTypes = ListRandom(renewableAmount, resourceTypes);
         //choose random types to be renewable
 
-        List<ResourceType> compTypes = ListRandom(compTypeAmount, types);
+        List<ResourceType> compTypes = ListRandom(compTypeAmount, resourceTypes);
+
+        int biggestDepth = 0;
+
+        for (var i = 0; i < typeAmount; i++)
+        {
+            var depth = PolymerDepth.GetInt();
+            if (depth > biggestDepth) biggestDepth = depth;
+        }
+
+        List<int> depthList = new();
+
+        for (var i = 0; i < typeAmount-biggestDepth; i++)
+        {
+            depthList.Add(PolymerDepth.GetInt());
+        }
+
+        List<Recipe> recipes = new();
+        List<ResourceType> notAssignedRecipe = new(resourceTypes);
+        List<ResourceType> assignedRecipe = new();
+
+        for (var i = 0; i < biggestDepth; i++)
+        {
+            var typeAmountI = 0;
+            for (var l = 0; l < depthList.Count;l++)
+            {
+                if (l == i) typeAmountI++;
+            }
+
+            var recipeAmount = typeAmountI / TypesPerRecipeGroup.GetInt()+1;
+            //adds 1 to ciel
+
+            for (var l = 0; l < recipeAmount; l++)
+            {
+                var recipe = new Recipe();
+                List<Resource> products = recipe.products = new();
+
+                var productAmount = TypesPerRecipeGroup.GetInt();
+
+                for (var p = 0; p < typeAmount; p++)
+                {
+                    var resourceType = notAssignedRecipe[0];
+                    notAssignedRecipe.Remove(resourceType);
+                    assignedRecipe.Add(resourceType);
+
+                    products.Add(new())
+                }
+
+                List<Resource> ingredients = recipe.ingredients = new();
+
+                recipes.Add(recipe);
+            }
+        }
+
         //choose random types to be available for organism composition
 
         //resources created and sorted into renewable and composition types
 
-        var highestPolymerDepth = HighestPolymerDepth.GetInt();
-        var avgPolymerDepth = Mathf.Min(HighestPolymerDepth.GetInt(), highestPolymerDepth);
-        var polymerDepthConc = PolymerDepthConc.GetValue();
-        polymerDepth.dynamic = true;
-        polymerDepth.min = 0;
-        polymerDepth.max = highestPolymerDepth;
-        polymerDepth.avg = avgPolymerDepth;
-        polymerDepth.conc = polymerDepthConc;
-        //setup polymer depth min, max, avg, and concentration
+        //var highestPolymerDepth = HighestPolymerDepth.GetInt();
+        //var avgPolymerDepth = Mathf.Min(HighestPolymerDepth.GetInt(), highestPolymerDepth);
+        //var polymerDepthConc = PolymerDepthConc.GetValue();
+        //polymerDepth.dynamic = true;
+        //polymerDepth.min = 0;
+        //polymerDepth.max = highestPolymerDepth;
+        //polymerDepth.avg = avgPolymerDepth;
+        //polymerDepth.conc = polymerDepthConc;
+        ////setup polymer depth min, max, avg, and concentration
 
-        List<ResourceType> notAssignedDepth = new(types);
-        //resources that haven't been assigned a depth
+        //List<ResourceType> notAssignedDepth = new(types);
+        ////resources that haven't been assigned a depth
 
-        List<List<ResourceType>> polymers = new(); 
-        //list of lists of types.
-        //element zero contains all elements of depth 0
+        //List<List<ResourceType>> polymerDepths = new(); 
+        ////list of lists of types.
+        ////element zero contains all elements of depth 0
 
-        List<int> depthCount = new();
+        //List<int> depthCount = new();
 
-        for (var i = 0; i < typeAmount-highestPolymerDepth; i++)
-        {
-            depthCount.Add(polymerDepth.GetInt()); //designate an amount of types to each depth
-        }
+        //for (var i = 0; i < typeAmount-highestPolymerDepth; i++)
+        //{
+        //    depthCount.Add(polymerDepth.GetInt()); //designate an amount of types to each depth
+        //}
 
-        for (var i = 0; i < highestPolymerDepth; i++)
-        {
-            List<ResourceType> polymerList = new();
-            //for each depth, create a list of polymers
+        //for (var i = 0; i < highestPolymerDepth; i++)
+        //{
+        //    List<ResourceType> polymerList = new();
+        //    //for each depth, create a list of polymers
 
 
-            for (var l = 0; l < depthCount[i]; l++)
-            {
-                var polymer = types[l];
-                polymers.Add(polymerList);
-                notAssignedDepth.Remove(polymer);
-            }
-            //and populate the list with designated amount
-        }
+        //    for (var l = 0; l < depthCount[i]+1; l++)
+        //    {
+        //        var polymer = types[l];
+        //        polymerDepths.Add(polymerList);
+        //        notAssignedDepth.Remove(polymer);
+        //    }
+        //    //and populate the list with designated amount
+        //}
 
-        //all resources have been assigned a depth, now we must decide what it takes to make them
+        ////all resources have been assigned a depth, now we must decide what it takes to make them
 
-        List<Recipe> recipes = new();
+        //List<Recipe> recipes = new();
 
-        List<List<ResourceType>> notAssignedRecipes = new(polymers);
+        //List<List<ResourceType>> notAssignedRecipes = new();
+        //foreach (var depth in polymerDepths)
+        //{
+        //    notAssignedRecipes.Add(new(depth));
+        //}
 
-        for (var i = 1; i < polymers.Count; i++)
-        {
-            MMA RecipeAmount = new();
+        //for (var i = 1; i < polymerDepths.Count; i++)
+        //{
+        //    var depthGroup = polymerDepths[i];
 
-            RecipeAmount.dynamic = true;
-            RecipeAmount.min = Mathf.CeilToInt(polymers[i].Count / TypesPerRecipeGroup.max);
-            RecipeAmount.max = Mathf.CeilToInt(polymers[i].Count / TypesPerRecipeGroup.min);
-            RecipeAmount.avg = Mathf.CeilToInt(polymers[i].Count / TypesPerRecipeGroup.avg);
-            RecipeAmount.conc = TypesPerRecipeGroup.conc;
+        //    MMA RecipeAmount = new();
 
-            var recipeCount = RecipeAmount.GetInt();
+        //    RecipeAmount.dynamic = true;
+        //    RecipeAmount.min = Mathf.CeilToInt(depthGroup.Count / TypesPerRecipeGroup.max);
+        //    RecipeAmount.max = Mathf.CeilToInt(depthGroup.Count / TypesPerRecipeGroup.min);
+        //    RecipeAmount.avg = Mathf.CeilToInt(depthGroup.Count / TypesPerRecipeGroup.avg);
+        //    RecipeAmount.conc = TypesPerRecipeGroup.conc;
 
-            //List<int> typeCounts = new();
+        //    var recipeCount = RecipeAmount.GetInt();
 
-            for (var l = 0; l < recipeCount; l++)
-            {
-                //typeCounts.Add(TypesPerRecipeGroup.GetInt());
+        //    for (var l = 0; l < recipeCount; l++)
+        //    {
+        //        List<Resource> ingredients = new();
+        //        List<Resource> products = new();
+        //        Recipe recipe = new();
+        //        recipe.ingredients = ingredients;
+        //        recipe.products = products;
 
-                List<Resource> ingredients = new();
-                List<Resource> products = new();
-                Recipe recipe = new();
-                recipe.ingredients = ingredients;
-                recipe.products = products;
+        //        var productCount = TypesPerRecipeGroup.GetInt();
+        //        productCount = Mathf.Min(productCount, depthGroup.Count);
+        //        //limit product count to amount of resources left within depth
+        //        for (var p = 0; p < productCount; p++)
+        //        {
+        //            var type = notAssignedRecipes[0][0];
+        //            notAssignedRecipes[0].Remove(type);
+        //            var amount = RecipePortions.GetInt();
+        //            products.Add(new(type, amount));
+        //        }
 
-                var productCount = TypesPerRecipeGroup.GetInt();
-                for (var p = 0; p < productCount; p++)
-                {
-                    //add atleast one type of this depth
-                    //can only include types of the same depth
-                    //must remove these products from the "not assigned" list
-                }
+        //        if (depthGroup.Count < 1) polymerDepths.Remove(depthGroup);
+        //        //if there is no more resources designated this depth, remove this depth from 
 
-                var ingredientCount = TypesPerRecipeGroup.GetInt();
-                for (var p = 0; p < ingredientCount; p++)
-                {
-                    //must include at least one type of depth decreased by 1
-                    //may include any other types of decreased depth
-                    //must be different from every other ingredientGroup
-                }
-            }
-        }
+        //        var ingredientCount = TypesPerRecipeGroup.GetInt();
+        //        for (var p = 0; p < ingredientCount; p++)
+        //        {
+        //            //must include at least one type of depth decreased by 1
+        //            //may include any other types of decreased depth
+        //            //must be different from every other ingredientGroup
+        //        }
+        //    }
+        //}
     }
 
     public List<T> ListRandom <T> (int count, List<T> list)

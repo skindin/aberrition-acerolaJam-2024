@@ -27,16 +27,21 @@ public class ResourceGeneratorEditor : Editor
         EditorGUILayout.LabelField("Component Type Ratio");
         DrawMMA(ref generator.CompTypeRatio);
 
-        EditorGUILayout.LabelField("Highest Polymer Depth");
-        DrawMMA(ref generator.HighestPolymerDepth);
+        //EditorGUILayout.LabelField("Highest Polymer Depth");
+        //DrawMMA(ref generator.HighestPolymerDepth);
 
-        EditorGUILayout.LabelField("Average Polymer Depth");
-        DrawMMA(ref generator.AvgPolymerDepth);
+        //EditorGUILayout.LabelField("Average Polymer Depth");
+        //DrawMMA(ref generator.AvgPolymerDepth);
 
-        EditorGUILayout.LabelField("Polymer Depth Concentration");
-        DrawMMA(ref generator.PolymerDepthConc);
+        //EditorGUILayout.LabelField("Polymer Depth Concentration");
+        //DrawMMA(ref generator.PolymerDepthConc);
 
-        if (GUI.changed)
+        EditorGUILayout.LabelField("Polymer Depth");
+        DrawMMA(ref generator.PolymerDepth);
+
+        //still gotta draw portions and typesPerGroup
+
+        if (GUI.changed && !Application.isPlaying)
         {
             EditorUtility.SetDirty(generator);
             EditorSceneManager.MarkSceneDirty(generator.gameObject.scene);
