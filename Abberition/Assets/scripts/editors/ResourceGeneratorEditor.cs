@@ -17,6 +17,13 @@ public class ResourceGeneratorEditor : Editor
 
         generator.seed = EditorGUILayout.IntField("Seed", generator.seed);
 
+        if (GUILayout.Button("New Seed"))
+        {
+            generator.NewSeed();
+            generator.GenerateResources();
+            generator.WriteData();
+        }
+
         if (GUILayout.Button("Generate Resources"))
         {
             generator.GenerateResources();

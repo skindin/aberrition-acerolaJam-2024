@@ -28,6 +28,11 @@ public class ResourceGenerator : MonoBehaviour
 
     public string dataString = "";
 
+    public void NewSeed ()
+    {
+        seed = Random.Range(0, 1000000000);
+    }
+
     public void GenerateResources ()
     {
         if (!resourceManager) resourceManager = FindObjectOfType<ResourceManager>();
@@ -55,6 +60,12 @@ public class ResourceGenerator : MonoBehaviour
         //create resources and assign names
 
         List<ResourceType> renewableTypes = ListRandom(renewableAmount, resourceTypes);
+
+        foreach (var type in renewableTypes)
+        {
+            type.renewable = true;
+        }
+
         //choose random types to be renewable
 
         List<ResourceType> compTypes = ListRandom(compTypeAmount, resourceTypes);
@@ -139,10 +150,6 @@ public class ResourceGenerator : MonoBehaviour
 
                 var productAmount = TypesPerRecipeGroup.GetInt();
                 var ingredientAmount = TypesPerRecipeGroup.GetInt();
-
-                //THIS IS DEFINITELY CAUSING PROBLEMS!!
-                //THERE IS NO DIRECT CLARIFICATION ON HOW MANY PRODUCTS SHOULD BE ASSIGNED!
-                //OF COURSE IT ISN'T ADDING UP THE RIGHT WAY!
 
                 List<int> portions = new();
 

@@ -6,6 +6,7 @@ using UnityEngine;
 public class ResourceType
 {
     public string name;
+    public bool renewable = false;
 
     public ResourceType (string name = "")
     {

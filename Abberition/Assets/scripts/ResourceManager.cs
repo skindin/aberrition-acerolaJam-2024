@@ -27,4 +27,24 @@ public class ResourceManager : MonoBehaviour
     {
         recipes.Remove(recipe);
     }
+
+    public void MutateOrganismRecipes (Organism organism)
+    {
+        foreach (var recipe in recipes)
+        {
+            var mutationChance = recipe.mutationChance * organism.instability.value;
+
+            if (Random.value <= mutationChance)
+            {
+                if (!organism.recipes.Contains(recipe))
+                {
+                    organism.recipes.Add(recipe);
+                }
+                else
+                {
+                    organism.recipes.Remove(recipe);
+                }
+            }
+        }
+    }
 }
