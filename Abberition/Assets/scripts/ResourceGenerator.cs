@@ -7,14 +7,15 @@ public class ResourceGenerator : MonoBehaviour
 
     public MMA
         TypeAmount,
-        RenewableRatio,
         CompTypeRatio,
         PolymerDepth,
         //HighestPolymerDepth,
         //AvgPolymerDepth,
         //PolymerDepthConc,
         TypesPerRecipeGroup,
-        RecipePortions
+        RecipePortions,
+        RenewableRatio,
+        DestroyEfficiency
         ;
 
     static List<int> primeNumbers { get; } = new List<int> { 2, 3, 5, 7, 11, 13, 17, 19 };
@@ -22,7 +23,9 @@ public class ResourceGenerator : MonoBehaviour
     string resourceNameList = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z";
 
     List<ResourceType> resourceTypes = new();
-    List<Recipe> recipes = new();
+    List<ResourceType> renewableTypes = new();
+    List<Recipe> constructiveRecipes = new();
+    List<Recipe> destructiveRecipes = new();
 
     public int seed;
 
@@ -30,7 +33,7 @@ public class ResourceGenerator : MonoBehaviour
 
     public void NewSeed ()
     {
-        seed = Random.Range(0, 1000000000);
+        seed = Random.Range(int.MinValue, int.MaxValue);
     }
 
     public void GenerateResources ()
@@ -40,7 +43,9 @@ public class ResourceGenerator : MonoBehaviour
         Random.InitState(seed);
 
         resourceTypes = new();
-        recipes = new();
+        renewableTypes = new();
+        constructiveRecipes = new();
+        destructiveRecipes = new();
 
         var typeAmount = TypeAmount.GetInt();
         var renewableAmount = Mathf.RoundToInt(RenewableRatio.GetValue() * typeAmount);
@@ -58,13 +63,6 @@ public class ResourceGenerator : MonoBehaviour
             resourceTypes.Add(new(names[i]));
         }
         //create resources and assign names
-
-        List<ResourceType> renewableTypes = ListRandom(renewableAmount, resourceTypes);
-
-        foreach (var type in renewableTypes)
-        {
-            type.renewable = true;
-        }
 
         //choose random types to be renewable
 
@@ -100,6 +98,10 @@ public class ResourceGenerator : MonoBehaviour
         //List<Recipe> recipes = new();
         List<ResourceType> notAssignedRecipe = new(resourceTypes);
         List<ResourceType> assignedRecipe = new();
+        List<List<ResourceType>> depthGroups = new();
+
+        List<ResourceType> initialDepthGroup = new();
+        depthGroups.Add(initialDepthGroup);
 
         for (var l = 0; l < depthList.Count; l++)
         {
@@ -108,6 +110,8 @@ public class ResourceGenerator : MonoBehaviour
                 var resourceType = notAssignedRecipe[0];
                 notAssignedRecipe.Remove(resourceType);
                 assignedRecipe.Add(resourceType);
+
+                initialDepthGroup.Add(resourceType);
 
                 depthList.RemoveAt(l);
                 l--;
@@ -118,6 +122,9 @@ public class ResourceGenerator : MonoBehaviour
 
         for (var i = 1; i < biggestDepth+1; i++) //for resource types of depth 1 and higher
         {
+            List<ResourceType> depthGroup = new();
+            depthGroups.Add(depthGroup);
+
             if (notAssignedRecipe.Count == 0)
             {
                 break;
@@ -174,6 +181,7 @@ public class ResourceGenerator : MonoBehaviour
 
                         notAssignedRecipe.Remove(resourceType);
                         assignedRecipe.Add(resourceType);
+                        depthGroup.Add(resourceType);
 
                         portions.RemoveAt(0);
                     }
@@ -183,9 +191,22 @@ public class ResourceGenerator : MonoBehaviour
 
                 List<Resource> ingredients = recipe.ingredients = new();
 
-                var uniqueListCount = Mathf.Min(ingredientAmount, lastResourceIndex);
+                var lesserDepthGroup = depthGroups[i - 1];
+                var lesserDepthTypeIndex = Random.Range(0, lesserDepthGroup.Count);
+                var lesserDepthType = lesserDepthGroup[lesserDepthTypeIndex];
+                var depthTypeResourceIndex = resourceTypes.IndexOf(lesserDepthType);
+
+                //ensures at least one type of neighboring depth is used to ensure recipe depth
+
+                var uniqueListCount = Mathf.Min(ingredientAmount, lastResourceIndex+1);
                 var uniqueIntList = GetUniqueInts(0, lastResourceIndex,uniqueListCount);
+
                 //get unique int list for unique resource types
+
+                if (!uniqueIntList.Contains(depthTypeResourceIndex))
+                    uniqueIntList[0] = depthTypeResourceIndex;
+
+                //if the list does not include the designated depth type index, replace first of list
 
                 for (var p = 0; p < uniqueIntList.Count; p++)
                 {
@@ -203,9 +224,8 @@ public class ResourceGenerator : MonoBehaviour
                 //!!THIS SYSTEM DOES NOT GUARANTEE THE FOLLOWING:
                 //THAT EVERY RESOURCE IS USED
                 //THAT THERE ARE NO DUPLICATE INGREDIENT GROUPS
-                //THAT A RESOURCE OF A GIVEN DEPTH USES ATLEAST ONE RESOURCE OF THE NEIGHBORING LESSER DEPTH
 
-                recipes.Add(recipe);
+                constructiveRecipes.Add(recipe);
 
                 if (i+1 >= biggestDepth && l+1 >= recipeAmount && notAssignedRecipe.Count > 0)
                 {
@@ -213,11 +233,39 @@ public class ResourceGenerator : MonoBehaviour
                 }
             }
         }
-
-        Mathf.FloatToHalf(1);
-        
         //resourceManager.resourceTypes = resourceTypes;
         //resourceManager.recipes = recipes;
+
+        //generate destructive recipes...
+
+        renewableTypes = ListRandom(renewableAmount, resourceTypes);
+
+        foreach (var type in renewableTypes)
+        {
+            type.renewable = true;
+        }
+
+        var recipeCount = constructiveRecipes.Count;
+
+        for (var i = 0; i < recipeCount; i++)
+        {
+            var ogRecipe = constructiveRecipes[i];
+            var newRecipe = new Recipe();
+            newRecipe.ingredients = new(ogRecipe.products);
+            newRecipe.products = new(ogRecipe.ingredients);
+            destructiveRecipes.Add(newRecipe);
+
+            foreach (var resource in newRecipe.products)
+            {
+                if (renewableTypes.Contains(resource.type))
+                {
+                    var efficiency = DestroyEfficiency.GetValue();
+                    var amount = Mathf.RoundToInt(resource.amount * (1-efficiency));
+                    if (amount > 0)
+                        newRecipe.ingredients.Add(new(resource.type, amount));
+                }
+            }
+        }
     }
 
     public string WriteData()
@@ -230,12 +278,28 @@ public class ResourceGenerator : MonoBehaviour
             if (type != resourceTypes[^1]) output += ", ";
         }
 
-        output += $"\nRecipes ({recipes.Count}):\n";
+        output += $"\nRenewable Resources ({renewableTypes.Count}): ";
 
-        foreach (var recipe in recipes)
+        foreach (var type in renewableTypes)
+        {
+            output += type.name;
+            if (type != renewableTypes[^1]) output += ", ";
+        }
+
+        output += $"\nConstructive Recipes ({constructiveRecipes.Count}):\n";
+
+        foreach (var recipe in constructiveRecipes)
         {
             output += recipe.ReadRecipe();
-            if (recipe != recipes[^1]) output += "\n";
+            if (recipe != constructiveRecipes[^1]) output += "\n";
+        }
+
+        output += $"\nDestructive Recipes ({constructiveRecipes.Count}):\n";
+
+        foreach (var recipe in destructiveRecipes)
+        {
+            output += recipe.ReadRecipe();
+            if (recipe != destructiveRecipes[^1]) output += "\n";
         }
 
         dataString = output;
@@ -280,27 +344,16 @@ public class ResourceGenerator : MonoBehaviour
         return commonPrime;
     }
 
-    public static List<int> GetUniqueInts (int min, int max, int count, int loopLimit = 100)
+    public static List<int> GetUniqueInts (int min, int max, int count)
     {
-        List<int> output = new();
-
-        var maxUnique = max - min;
-
-        for (var i = 0; i < loopLimit; i++) //put a limit because frik while loops
+        List<int> intList = new();
+        
+        for (var i = min; i < max+1; i++)
         {
-            var randVal = Random.Range(min, max + 1);
-            if (!output.Contains(randVal)) output.Add(randVal);
-
-            if (output.Count >= count) break;
-            if (count > maxUnique && output.Count >= maxUnique)
-            {
-                Debug.Log($"There was only {maxUnique} unique values possible!");
-                break;
-            }
-            // in case the user wants more unique int values than possible...
+            intList.Add(i);
         }
 
-        return output;
+        return ListRandom(count, intList);
     }
 
     public static List<T> ListRandom <T> (int count, List<T> list)
@@ -317,7 +370,7 @@ public class ResourceGenerator : MonoBehaviour
         for (var i = 0; i < count; i++)
         {
             var randIndex = Random.Range(0, notIncluded.Count);
-            var resource = list[randIndex];
+            var resource = notIncluded[randIndex];
             output.Add(resource);
             notIncluded.Remove(resource);
         }

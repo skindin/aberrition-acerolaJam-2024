@@ -37,9 +37,6 @@ public class ResourceGeneratorEditor : Editor
         EditorGUILayout.LabelField("Type Amount");
         DrawMMA(ref generator.TypeAmount);
 
-        EditorGUILayout.LabelField("Renewable Ratio");
-        DrawMMA(ref generator.RenewableRatio);
-
         EditorGUILayout.LabelField("Component Type Ratio");
         DrawMMA(ref generator.CompTypeRatio);
 
@@ -60,6 +57,12 @@ public class ResourceGeneratorEditor : Editor
 
         EditorGUILayout.LabelField("Recipe Portions");
         DrawMMA(ref generator.RecipePortions);
+
+        EditorGUILayout.LabelField("Renewable Ratio");
+        DrawMMA(ref generator.RenewableRatio);
+
+        EditorGUILayout.LabelField("Destroy Efficiency");
+        DrawMMA(ref generator.DestroyEfficiency);
 
         if (GUI.changed && !Application.isPlaying)
         {

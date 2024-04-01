@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [System.Serializable]
 public class Organism
@@ -8,10 +9,12 @@ public class Organism
     public string name, code; //display code if name is empty
     public List<Organism> lineage = new();
     public List<Organism> offspring = new();
-    public MutatableTrait aggression, instability; //never gets to 0
+    public MutatableTrait aggression, instability;
+    //agression determines how much resources they get
 
     public List<Recipe> recipes = new();
     public List<Resource> comp = new(); //resources this organism is made of
+    public List<Resource> diet = new(); //resources this organism needs
 
     public Organism(Organism parent = null)
     {
@@ -51,5 +54,18 @@ public class Organism
     {
         aggression.Mutate(instability.value);
         instability.Mutate(instability.value);
+    }
+
+    public void DetermineDiet ()
+    {
+        foreach (var resource in comp)
+        {
+            recipes.Find(x => x.products.Any(x => x.type == resource.type));
+        }        
+    }
+
+    public Recipe FindRecipe (ResourceType type)
+    {
+        return null;
     }
 }
